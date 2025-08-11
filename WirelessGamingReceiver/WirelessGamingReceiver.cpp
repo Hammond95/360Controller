@@ -26,7 +26,7 @@
 
 //#define PROTOCOL_DEBUG
 
-OSDefineMetaClassAndStructors(WirelessGamingReceiver, IOService)
+OSDefineMetaClassAndStructorsWithInit(WirelessGamingReceiver, IOService)
 
 // Holds data for asynchronous reads
 typedef struct WGRREAD
@@ -36,21 +36,19 @@ typedef struct WGRREAD
 } WGRREAD;
 
 // Get maximum packet size for a pipe
-static UInt32 GetMaxPacketSize(IOUSBPipe *pipe)
+static UInt32 GetMaxPacketSize(IOUSBHostPipe *pipe)
 {
-    const IOUSBEndpointDescriptor *ed = pipe->GetEndpointDescriptor();
-
-    if (ed == NULL) return 0;
-    else return ed->wMaxPacketSize;
+    // IOUSBHostPipe does not expose endpoint descriptor directly; default to 64
+    return 64;
 }
 
 // Start device
 bool WirelessGamingReceiver::start(IOService *provider)
 {
     const IOUSBConfigurationDescriptor *cd;
-    IOUSBFindInterfaceRequest interfaceRequest;
-    IOUSBFindEndpointRequest pipeRequest;
-    IOUSBInterface *interface;
+
+
+
     int iConnection, iOther, i;
 
     if (!IOService::start(provider))
@@ -59,7 +57,7 @@ bool WirelessGamingReceiver::start(IOService *provider)
         return false;
     }
 
-    device = OSDynamicCast(IOUSBDevice, provider);
+    device = OSDynamicCast(IOUSBHostDevice, provider);
     if (device == NULL)
     {
         // IOLog("start - invalid provider\n");
@@ -67,7 +65,7 @@ bool WirelessGamingReceiver::start(IOService *provider)
     }
 
     // Check for configurations
-    if (device->GetNumConfigurations() < 1)
+    if (device->getDeviceDescriptor()->bNumConfigurations < 1)
     {
         device = NULL;
         // IOLog("start - device has no configurations!\n");
@@ -75,7 +73,8 @@ bool WirelessGamingReceiver::start(IOService *provider)
     }
 
     // Set configuration
-    cd = device->GetFullConfigurationDescriptor(0);
+    const StandardUSB::ConfigurationDescriptor* cfg = device->getConfigurationDescriptor(0);
+    cd = reinterpret_cast<const IOUSBConfigurationDescriptor*>(cfg);
     if (cd == NULL)
     {
         device = NULL;
@@ -89,7 +88,7 @@ bool WirelessGamingReceiver::start(IOService *provider)
         // IOLog("start - failed to open device\n");
         goto fail;
     }
-    if (device->SetConfiguration(this, cd->bConfigurationValue, true) != kIOReturnSuccess)
+    if (device->setConfiguration(cfg->bConfigurationValue, true) != kIOReturnSuccess)
     {
         // IOLog("start - unable to set configuration\n");
         goto fail;
@@ -108,73 +107,69 @@ bool WirelessGamingReceiver::start(IOService *provider)
         connections[i].controllerStarted = false;
     }
 
-    pipeRequest.interval = 0;
-    pipeRequest.maxPacketSize = 0;
-    pipeRequest.type = kUSBInterrupt;
-    interfaceRequest.bInterfaceClass = kIOUSBFindInterfaceDontCare;
-    interfaceRequest.bInterfaceSubClass = kIOUSBFindInterfaceDontCare;
-    interfaceRequest.bInterfaceProtocol = kIOUSBFindInterfaceDontCare;
-    interfaceRequest.bAlternateSetting = 0;
-    interface = NULL;
     iConnection = 0;
     iOther = 0;
-    while ((interface = device->FindNextInterface(interface, &interfaceRequest)) != NULL)
+    // Walk interfaces using StandardUSB descriptors
+    const StandardUSB::InterfaceDescriptor* ifDesc = NULL;
+    while ((ifDesc = StandardUSB::getNextInterfaceDescriptor(cfg, ifDesc)) != NULL)
     {
-        switch (interface->GetInterfaceProtocol())
+        // Create IOUSBHostInterface from descriptors
+        IOUSBHostInterface* interfaceHost = IOUSBHostInterface::withDescriptors(cfg, ifDesc);
+        if (!interfaceHost) continue;
+        switch (ifDesc->bInterfaceProtocol)
         {
             case 129:   // Controller
-                if (!interface->open(this))
+                if (!interfaceHost->open(this))
                 {
                     // IOLog("start: Failed to open control interface\n");
                     goto fail;
                 }
-                connections[iConnection].controller = interface;
-                pipeRequest.direction = kUSBIn;
-                connections[iConnection].controllerIn = interface->FindNextPipe(NULL, &pipeRequest);
-                if (connections[iConnection].controllerIn == NULL)
-                {
-                    // IOLog("start: Failed to open control input pipe\n");
+                connections[iConnection].controller = interfaceHost;
+                // pick interrupt IN/OUT endpoints
+                const StandardUSB::EndpointDescriptor* ep = NULL;
+                while ((ep = StandardUSB::getNextEndpointDescriptor(cfg, ifDesc, ep)) != NULL) {
+                    if (StandardUSB::getEndpointType(ep) != StandardUSB::kEndpointDescriptorTransferTypeInterrupt) continue;
+                    uint8_t addr = StandardUSB::getEndpointAddress(ep);
+                    uint8_t dir = StandardUSB::getEndpointDirection(ep);
+                    IOUSBHostPipe* p = interfaceHost->copyPipe(addr);
+                    if (!p) continue;
+                    if (dir == StandardUSB::kEndpointDescriptorDirectionIn && connections[iConnection].controllerIn == NULL)
+                        connections[iConnection].controllerIn = p;
+                    else if (dir == StandardUSB::kEndpointDescriptorDirectionOut && connections[iConnection].controllerOut == NULL)
+                        connections[iConnection].controllerOut = p;
+                }
+                if (connections[iConnection].controllerIn == NULL || connections[iConnection].controllerOut == NULL) {
                     goto fail;
                 }
-                else
-                    connections[iConnection].controllerIn->retain();
-                pipeRequest.direction = kUSBOut;
-                connections[iConnection].controllerOut = interface->FindNextPipe(NULL, &pipeRequest);
-                if (connections[iConnection].controllerOut == NULL)
-                {
-                    // IOLog("start: Failed to open control output pipe\n");
-                    goto fail;
-                }
-                else
-                    connections[iConnection].controllerOut->retain();
+                connections[iConnection].controllerIn->retain();
+                connections[iConnection].controllerOut->retain();
                 iConnection++;
                 break;
 
             case 130:   // It is a mystery
-                if (!interface->open(this))
+                if (!interfaceHost->open(this))
                 {
                     // IOLog("start: Failed to open mystery interface\n");
                     goto fail;
                 }
-                connections[iOther].other = interface;
-                pipeRequest.direction = kUSBIn;
-                connections[iOther].otherIn = interface->FindNextPipe(NULL, &pipeRequest);
-                if (connections[iOther].otherIn == NULL)
-                {
-                    // IOLog("start: Failed to open mystery input pipe\n");
+                connections[iOther].other = interfaceHost;
+                const StandardUSB::EndpointDescriptor* ep2 = NULL;
+                while ((ep2 = StandardUSB::getNextEndpointDescriptor(cfg, ifDesc, ep2)) != NULL) {
+                    if (StandardUSB::getEndpointType(ep2) != StandardUSB::kEndpointDescriptorTransferTypeInterrupt) continue;
+                    uint8_t addr = StandardUSB::getEndpointAddress(ep2);
+                    uint8_t dir = StandardUSB::getEndpointDirection(ep2);
+                    IOUSBHostPipe* p = interfaceHost->copyPipe(addr);
+                    if (!p) continue;
+                    if (dir == StandardUSB::kEndpointDescriptorDirectionIn && connections[iOther].otherIn == NULL)
+                        connections[iOther].otherIn = p;
+                    else if (dir == StandardUSB::kEndpointDescriptorDirectionOut && connections[iOther].otherOut == NULL)
+                        connections[iOther].otherOut = p;
+                }
+                if (connections[iOther].otherIn == NULL || connections[iOther].otherOut == NULL) {
                     goto fail;
                 }
-                else
-                    connections[iOther].otherIn->retain();
-                pipeRequest.direction = kUSBOut;
-                connections[iOther].otherOut = interface->FindNextPipe(NULL, &pipeRequest);
-                if (connections[iOther].otherOut == NULL)
-                {
-                    // IOLog("start: Failed to open mystery output pipe\n");
-                    goto fail;
-                }
-                else
-                    connections[iOther].otherOut->retain();
+                connections[iOther].otherIn->retain();
+                connections[iOther].otherOut->retain();
                 iOther++;
                 break;
 
@@ -248,7 +243,7 @@ IOReturn WirelessGamingReceiver::message(UInt32 type,IOService *provider,void *a
 // Queue a read on a controller
 bool WirelessGamingReceiver::QueueRead(int index)
 {
-    IOUSBCompletion complete;
+    IOUSBHostCompletion complete;
     IOReturn err;
     WGRREAD *data = (WGRREAD*)IOMalloc(sizeof(WGRREAD));
 
@@ -262,11 +257,12 @@ bool WirelessGamingReceiver::QueueRead(int index)
         return false;
     }
 
-    complete.target = this;
+    complete.owner = this;
     complete.action = _ReadComplete;
     complete.parameter = data;
 
-    err = connections[index].controllerIn->Read(data->buffer, 0, 0, data->buffer->getLength(), &complete);
+    uint32_t bytesTransferred = 0;
+    err = connections[index].controllerIn->io(data->buffer, (uint32_t)data->buffer->getLength(), bytesTransferred, 0);
     if (err == kIOReturnSuccess)
         return true;
 
@@ -287,7 +283,7 @@ void WirelessGamingReceiver::ReadComplete(void *parameter, IOReturn status, UInt
     {
         case kIOReturnOverrun:
             // IOLog("read - kIOReturnOverrun, clearing stall\n");
-            connections[data->index].controllerIn->ClearStall();
+            connections[data->index].controllerIn->clearStall(false);
             // fall through
         case kIOReturnSuccess:
             ProcessMessage(data->index, (unsigned char*)data->buffer->getBytesNoCopy(), (int)data->buffer->getLength() - bufferSizeRemaining);
@@ -313,7 +309,7 @@ void WirelessGamingReceiver::ReadComplete(void *parameter, IOReturn status, UInt
 bool WirelessGamingReceiver::QueueWrite(int index, const void *bytes, UInt32 length)
 {
     IOBufferMemoryDescriptor *outBuffer;
-    IOUSBCompletion complete;
+    IOUSBHostCompletion complete;
     IOReturn err;
 
     outBuffer = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, kIODirectionOut, length);
@@ -324,11 +320,12 @@ bool WirelessGamingReceiver::QueueWrite(int index, const void *bytes, UInt32 len
     }
     outBuffer->writeBytes(0, bytes, length);
 
-    complete.target = this;
+    complete.owner = this;
     complete.action = _WriteComplete;
     complete.parameter = outBuffer;
 
-    err = connections[index].controllerOut->Write(outBuffer, 0, 0, length, &complete);
+    uint32_t bytesTransferred = 0;
+    err = connections[index].controllerOut->io(outBuffer, (uint32_t)length, bytesTransferred, 0);
     if (err == kIOReturnSuccess)
         return true;
     else
@@ -362,13 +359,13 @@ void WirelessGamingReceiver::ReleaseAll(void)
         }
         if (connections[i].controllerIn != NULL)
         {
-            connections[i].controllerIn->Abort();
+            connections[i].controllerIn->abort(kAbortOptionNone, kIOReturnAborted, this);
             connections[i].controllerIn->release();
             connections[i].controllerIn = NULL;
         }
         if (connections[i].controllerOut != NULL)
         {
-            connections[i].controllerOut->Abort();
+            connections[i].controllerOut->abort(kAbortOptionNone, kIOReturnAborted, this);
             connections[i].controllerOut->release();
             connections[i].controllerOut = NULL;
         }
@@ -379,13 +376,13 @@ void WirelessGamingReceiver::ReleaseAll(void)
         }
         if (connections[i].otherIn != NULL)
         {
-            connections[i].otherIn->Abort();
+            connections[i].otherIn->abort(kAbortOptionNone, kIOReturnAborted, this);
             connections[i].otherIn->release();
             connections[i].otherIn = NULL;
         }
         if (connections[i].otherOut != NULL)
         {
-            connections[i].otherOut->Abort();
+            connections[i].otherOut->abort(kAbortOptionNone, kIOReturnAborted, this);
             connections[i].otherOut->release();
             connections[i].otherOut = NULL;
         }

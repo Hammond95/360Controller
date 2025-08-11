@@ -58,6 +58,7 @@
 		55B6371618C1058E00CE933D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55B636F918C1054F00CE933D /* InfoPlist.strings */; };
 		55B6371718C105B800CE933D /* _60Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55B636EF18C1054F00CE933D /* _60Controller.cpp */; };
 		55B6371A18C105B800CE933D /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55B636F618C1054F00CE933D /* Controller.cpp */; };
+
 		55B6372118C108A500CE933D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55B6372018C108A500CE933D /* CoreFoundation.framework */; };
 		55B6373C18C108D200CE933D /* devlink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55B6372D18C108D200CE933D /* devlink.cpp */; };
 		55B6373D18C108D200CE933D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55B6372F18C108D200CE933D /* InfoPlist.strings */; };
@@ -238,7 +239,7 @@
 		3FE789AB1A70288F00FF4065 /* MyDeadZoneViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyDeadZoneViewer.m; sourceTree = "<group>"; };
 		3FE789AE1A70331C00FF4065 /* MyTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyTrigger.h; sourceTree = "<group>"; };
 		3FE789AF1A70331C00FF4065 /* MyTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyTrigger.m; sourceTree = "<group>"; };
-		551B911F1A68BDB000EA6527 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Pref360ControlPref.xib; sourceTree = "<group>"; };
+		551B911F1A68BDB000EA6527 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Pref360ControlPref.xib; sourceTree = "<group>"; };
 		551CDFFD196EF52F000869B6 /* Pref360Control_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Pref360Control_Prefix.pch; sourceTree = "<group>"; };
 		551CDFFF196EFD34000869B6 /* Install360Controller.pkgproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Install360Controller.pkgproj; sourceTree = "<group>"; };
 		551CE001196EFD34000869B6 /* finish.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = finish.sh; sourceTree = "<group>"; };
@@ -273,7 +274,9 @@
 		55B636F618C1054F00CE933D /* Controller.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Controller.cpp; sourceTree = "<group>"; };
 		55B636F718C1054F00CE933D /* Controller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
 		55B636F818C1054F00CE933D /* ControlStruct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ControlStruct.h; sourceTree = "<group>"; };
-		55B636FA18C1054F00CE933D /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+
+
+		55B636FB18C1054F00CE933D /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		55B636FB18C1054F00CE933D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55B636FD18C1054F00CE933D /* xbox360hid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xbox360hid.h; sourceTree = "<group>"; };
 		55B6370718C1057100CE933D /* 360Controller.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = 360Controller.kext; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -647,6 +650,7 @@
 				55B636F618C1054F00CE933D /* Controller.cpp */,
 				55B636F818C1054F00CE933D /* ControlStruct.h */,
 				55B636FD18C1054F00CE933D /* xbox360hid.h */,
+
 				55A2B8E218C11D4D006829A2 /* Resources */,
 			);
 			path = 360Controller;
@@ -1173,6 +1177,7 @@
 				62035D1920C04F7D003E70C1 /* ChatPad.cpp in Sources */,
 				55B6371718C105B800CE933D /* _60Controller.cpp in Sources */,
 				55B6371A18C105B800CE933D /* Controller.cpp in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1378,7 +1383,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 62DD3D4920C044980073EC19 /* DeveloperSettings.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -1402,7 +1407,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mice.driver.XBOBTFF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = plugin;
 			};
@@ -1412,7 +1417,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 62DD3D4920C044980073EC19 /* DeveloperSettings.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -1437,7 +1442,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mice.driver.XBOBTFF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = plugin;
 			};
@@ -1462,7 +1467,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mice.driver.XboxOneBluetooth;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Debug;
@@ -1487,7 +1492,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mice.driver.XboxOneBluetooth;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Release;
@@ -1529,15 +1534,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				MIN_MACOS_VERSION = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MIN_MACOS_VERSION = 11.0;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
 					"-Wno-unknown-warning-option",
 					"-Wno-deprecated-register",
+					"-Wno-deprecated-declarations",
+					"-Wno-inconsistent-missing-override",
 				);
 			};
 			name = Debug;
@@ -1573,14 +1580,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				MIN_MACOS_VERSION = 10.11;
-				SDKROOT = macosx10.10;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MIN_MACOS_VERSION = 11.0;
+				SDKROOT = macosx;
 				STRINGS_FILE_OUTPUT_ENCODING = binary;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
 					"-Wno-unknown-warning-option",
 					"-Wno-deprecated-register",
+					"-Wno-deprecated-declarations",
+					"-Wno-inconsistent-missing-override",
 				);
 			};
 			name = Release;
@@ -1598,7 +1607,7 @@
 				INFOPLIST_FILE = "360Daemon/360DaemonApp-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application Support/MICE";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1617,7 +1626,7 @@
 				INFOPLIST_FILE = "360Daemon/360DaemonApp-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application Support/MICE";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1633,7 +1642,7 @@
 				MODULE_NAME = com.mice.driver.Xbox360Controller;
 				MODULE_VERSION = "${CURRENT_PROJECT_VERSION}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Debug;
@@ -1650,7 +1659,7 @@
 				MODULE_NAME = com.mice.driver.Xbox360Controller;
 				MODULE_VERSION = "${CURRENT_PROJECT_VERSION}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Release;
@@ -1660,7 +1669,7 @@
 			baseConfigurationReference = 62DD3D4920C044980073EC19 /* DeveloperSettings.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				EXPORTED_SYMBOLS_FILE = Feedback360/Feedback360.exp;
@@ -1668,7 +1677,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = plugin;
 			};
@@ -1679,16 +1688,16 @@
 			baseConfigurationReference = 62DD3D4920C044980073EC19 /* DeveloperSettings.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				DEAD_CODE_STRIPPING = YES;
 				EXPORTED_SYMBOLS_FILE = Feedback360/Feedback360.exp;
 				INFOPLIST_FILE = Feedback360/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = plugin;
 			};
@@ -1707,7 +1716,7 @@
 				INFOPLIST_FILE = DriverTool/Info.plist;
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1726,7 +1735,7 @@
 				INFOPLIST_FILE = DriverTool/Info.plist;
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -1749,7 +1758,7 @@
 				INFOPLIST_FILE = Pref360Control/Info.plist;
 				INSTALL_PATH = "${LOCAL_LIBRARY_DIR}/PreferencePanes";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = prefPane;
 			};
 			name = Debug;
@@ -1774,7 +1783,7 @@
 				INFOPLIST_FILE = Pref360Control/Info.plist;
 				INSTALL_PATH = "${LOCAL_LIBRARY_DIR}/PreferencePanes";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = prefPane;
 			};
 			name = Release;
@@ -1790,7 +1799,7 @@
 				MODULE_NAME = com.mice.driver.Wireless360Controller;
 				MODULE_VERSION = "${CURRENT_PROJECT_VERSION}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Debug;
@@ -1807,7 +1816,7 @@
 				MODULE_NAME = com.mice.driver.Wireless360Controller;
 				MODULE_VERSION = "${CURRENT_PROJECT_VERSION}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Release;
@@ -1823,7 +1832,7 @@
 				MODULE_NAME = com.mice.driver.WirelessGamingReceiver;
 				MODULE_VERSION = "${CURRENT_PROJECT_VERSION}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Debug;
@@ -1840,7 +1849,7 @@
 				MODULE_NAME = com.mice.driver.WirelessGamingReceiver;
 				MODULE_VERSION = "${CURRENT_PROJECT_VERSION}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Release;
@@ -1853,7 +1862,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Manual;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1865,7 +1874,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -1882,7 +1891,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1900,7 +1909,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

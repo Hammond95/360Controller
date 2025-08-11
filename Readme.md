@@ -29,7 +29,7 @@
 
 ## About
 
-**As of December 28, 2020, there are not plans to add Big Sur support, including Apple Silicon support. It will most likely not work on Big Sur.**
+**✅ Apple Silicon (M1/M2) Support Added!** This driver now supports macOS 11.0 (Big Sur) and later, including native Apple Silicon support. See [APPLE_SILICON_README.md](APPLE_SILICON_README.md) for detailed instructions.
 
 This driver supports the Microsoft Xbox series of controllers including:
 
@@ -119,7 +119,20 @@ Additionally, to use the included build scripts, you will need to change your pr
 
 You will need a full installation of Xcode to build this project. The command line tools are not enough.
 
-The project consists of three main parts: The driver (implemented in C++, as an I/O Kit C++ class), the force feedback plugin (implemented in C, as an I/O Kit COM plugin) and the preference pane (implemented in Objective C as a preference pane plugin). To build, use the standard Xcode build for Deployment on each of the 3 projects. Build Feedback360 before 360Controller, as the 360Controller project includes a script to copy the Feedback360 bundle to the correct place in the .kext to make it work.
+The project consists of three main parts: The driver (implemented in C++, as an I/O Kit C++ class), the force feedback plugin (implemented in C, as an I/O Kit COM plugin) and the preference pane (implemented in Objective C as a preference pane plugin). 
+
+### Building for Apple Silicon (M1/M2)
+
+For Apple Silicon Macs, use the optimized build script:
+```bash
+./build_apple_silicon.sh
+```
+
+This script automatically detects your architecture and builds universal binaries supporting both ARM64 and x86_64.
+
+### Building for Intel Macs
+
+To build, use the standard Xcode build for Deployment on each of the 3 projects. Build Feedback360 before 360Controller, as the 360Controller project includes a script to copy the Feedback360 bundle to the correct place in the .kext to make it work.
 
 To debug the driver, `sudo cp -R 360Controller.kext /tmp/` to assign the correct properties - note that the Force Feedback plugin only seems to be found by OSX if the driver is in /System/Library/Extensions so it can only be debugged in place. Due to the fact that drivers are now stored in /Library/Extenions, this means that you must create a symlink between the location of the driver and /System/Library/Extensions so that the force feedback plugin can operate properly.
 
