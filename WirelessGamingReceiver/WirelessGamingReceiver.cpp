@@ -26,7 +26,7 @@
 
 //#define PROTOCOL_DEBUG
 
-OSDefineMetaClassAndStructorsWithInit(WirelessGamingReceiver, IOService)
+OSDefineMetaClassAndStructors(WirelessGamingReceiver, IOService)
 
 // Holds data for asynchronous reads
 typedef struct WGRREAD
@@ -46,8 +46,8 @@ static UInt32 GetMaxPacketSize(IOUSBHostPipe *pipe)
 bool WirelessGamingReceiver::start(IOService *provider)
 {
     const IOUSBConfigurationDescriptor *cd;
-
-
+    const StandardUSB::InterfaceDescriptor* ifDesc;
+    const StandardUSB::ConfigurationDescriptor* cfg;
 
     int iConnection, iOther, i;
 
@@ -73,7 +73,7 @@ bool WirelessGamingReceiver::start(IOService *provider)
     }
 
     // Set configuration
-    const StandardUSB::ConfigurationDescriptor* cfg = device->getConfigurationDescriptor(0);
+    cfg = device->getConfigurationDescriptor(0);
     cd = reinterpret_cast<const IOUSBConfigurationDescriptor*>(cfg);
     if (cd == NULL)
     {
@@ -110,7 +110,7 @@ bool WirelessGamingReceiver::start(IOService *provider)
     iConnection = 0;
     iOther = 0;
     // Walk interfaces using StandardUSB descriptors
-    const StandardUSB::InterfaceDescriptor* ifDesc = NULL;
+    ifDesc = NULL;
     while ((ifDesc = StandardUSB::getNextInterfaceDescriptor(cfg, ifDesc)) != NULL)
     {
         // Create IOUSBHostInterface from descriptors
@@ -119,6 +119,7 @@ bool WirelessGamingReceiver::start(IOService *provider)
         switch (ifDesc->bInterfaceProtocol)
         {
             case 129:   // Controller
+            {
                 if (!interfaceHost->open(this))
                 {
                     // IOLog("start: Failed to open control interface\n");
@@ -144,9 +145,11 @@ bool WirelessGamingReceiver::start(IOService *provider)
                 connections[iConnection].controllerIn->retain();
                 connections[iConnection].controllerOut->retain();
                 iConnection++;
+            }
                 break;
 
             case 130:   // It is a mystery
+            {
                 if (!interfaceHost->open(this))
                 {
                     // IOLog("start: Failed to open mystery interface\n");
@@ -171,6 +174,7 @@ bool WirelessGamingReceiver::start(IOService *provider)
                 connections[iOther].otherIn->retain();
                 connections[iOther].otherOut->retain();
                 iOther++;
+            }
                 break;
 
             default:
@@ -359,13 +363,13 @@ void WirelessGamingReceiver::ReleaseAll(void)
         }
         if (connections[i].controllerIn != NULL)
         {
-            connections[i].controllerIn->abort(kAbortOptionNone, kIOReturnAborted, this);
+            connections[i].controllerIn->abort(IOUSBHostIOSource::kAbortAsynchronous, kIOReturnAborted, this);
             connections[i].controllerIn->release();
             connections[i].controllerIn = NULL;
         }
         if (connections[i].controllerOut != NULL)
         {
-            connections[i].controllerOut->abort(kAbortOptionNone, kIOReturnAborted, this);
+            connections[i].controllerOut->abort(IOUSBHostIOSource::kAbortAsynchronous, kIOReturnAborted, this);
             connections[i].controllerOut->release();
             connections[i].controllerOut = NULL;
         }
@@ -376,13 +380,13 @@ void WirelessGamingReceiver::ReleaseAll(void)
         }
         if (connections[i].otherIn != NULL)
         {
-            connections[i].otherIn->abort(kAbortOptionNone, kIOReturnAborted, this);
+            connections[i].otherIn->abort(IOUSBHostIOSource::kAbortAsynchronous, kIOReturnAborted, this);
             connections[i].otherIn->release();
             connections[i].otherIn = NULL;
         }
         if (connections[i].otherOut != NULL)
         {
-            connections[i].otherOut->abort(kAbortOptionNone, kIOReturnAborted, this);
+            connections[i].otherOut->abort(IOUSBHostIOSource::kAbortAsynchronous, kIOReturnAborted, this);
             connections[i].otherOut->release();
             connections[i].otherOut = NULL;
         }

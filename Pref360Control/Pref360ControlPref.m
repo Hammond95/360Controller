@@ -84,6 +84,7 @@ static void callbackHandleDevice(void *param,io_iterator_t iterator)
     io_registry_entry_t registryEntry;
 
     int largeMotor, smallMotor;
+    ControllerType controllerType;
 
     IONotificationPortRef notifyPort;
     CFRunLoopSourceRef notifySource;

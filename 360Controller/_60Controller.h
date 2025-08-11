@@ -26,6 +26,8 @@
 #include <IOKit/hid/IOHIDDevice.h>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Winconsistent-missing-override"
+#pragma GCC diagnostic ignored "-Wquoted-include-in-framework-header"
 #include <IOKit/usb/IOUSBHostDevice.h>
 #include <IOKit/usb/IOUSBHostInterface.h>
 #include <IOKit/usb/IOUSBHostPipe.h>
@@ -129,20 +131,20 @@ public:
     UInt8 outCounter = 6;
 
     // this is from the IORegistryEntry - no provider yet
-    virtual bool init(OSDictionary *propTable);
-    virtual void free(void);
+    virtual bool init(OSDictionary *propTable) override;
+    virtual void free(void) override;
 
-    bool start(IOService *provider);
-    bool willTerminate(IOService *provider, IOOptionBits options);
-    void stop(IOService *provider);
+    bool start(IOService *provider) override;
+    bool willTerminate(IOService *provider, IOOptionBits options) override;
+    void stop(IOService *provider) override;
 
     // IOKit methods. These methods are defines in <IOKit/IOService.h>
 
-    virtual IOReturn setProperties(OSObject *properties);
+    virtual IOReturn setProperties(OSObject *properties) override;
 
-    virtual IOReturn message(UInt32 type, IOService *provider, void *argument);
+    virtual IOReturn message(UInt32 type, IOService *provider, void *argument) override;
 
-    virtual bool didTerminate(IOService *provider, IOOptionBits options, bool *defer);
+    virtual bool didTerminate(IOService *provider, IOOptionBits options, bool *defer) override;
 
     // Hooks
     virtual void ReadComplete(void *parameter,IOReturn status,UInt32 bufferSizeRemaining);

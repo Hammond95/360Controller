@@ -25,6 +25,8 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Winconsistent-missing-override"
+#pragma GCC diagnostic ignored "-Wquoted-include-in-framework-header"
 #include <IOKit/usb/IOUSBHostDevice.h>
 #include <IOKit/usb/IOUSBHostInterface.h>
 #include <IOKit/usb/IOUSBHostPipe.h>
@@ -57,10 +59,10 @@ class WirelessGamingReceiver : public IOService
 {
     OSDeclareDefaultStructors(WirelessGamingReceiver);
 public:
-    bool start(IOService *provider);
-    void stop(IOService *provider);
+    bool start(IOService *provider) override;
+    void stop(IOService *provider) override;
 
-    IOReturn message(UInt32 type,IOService *provider,void *argument);
+    IOReturn message(UInt32 type,IOService *provider,void *argument) override;
 
     // For WirelessDevice to use
     OSNumber* newLocationIDNumber() const;
@@ -87,7 +89,7 @@ private:
 
     void ReleaseAll(void);
 
-    bool didTerminate(IOService *provider, IOOptionBits options, bool *defer);
+    bool didTerminate(IOService *provider, IOOptionBits options, bool *defer) override;
 
     static void _ReadComplete(void *target, void *parameter, IOReturn status, UInt32 bufferSizeRemaining);
     static void _WriteComplete(void *target, void *parameter, IOReturn status, UInt32 bufferSizeRemaining);

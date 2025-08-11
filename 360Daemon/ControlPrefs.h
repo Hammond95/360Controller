@@ -38,7 +38,7 @@ NSDictionary* GetController(NSString *serial);
 
 // Configuration settings
 void SetKnownDevices(NSDictionary *devices);
-NSDictionary* GetKnownDevices();
+NSDictionary* GetKnownDevices(void);
 
 // Utility functions
 NSString* GetSerialNumber(io_service_t device);
