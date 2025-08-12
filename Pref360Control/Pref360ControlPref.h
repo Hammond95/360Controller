@@ -43,7 +43,7 @@ typedef NS_ENUM(NSUInteger, ControllerType) {
     XboxOneController = 2,
     XboxOnePretend360Controller = 3,
     Xbox360Pretend360Controller = 4
-} controllerType;
+};
 
 @interface Pref360ControlPref : NSPreferencePane
 // Window components

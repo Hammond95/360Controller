@@ -21,11 +21,16 @@
  along with Foobar; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Winconsistent-missing-override"
+#pragma GCC diagnostic ignored "-Wquoted-include-in-framework-header"
 #include <IOKit/IOLib.h>
 #include <IOKit/IOMessage.h>
 #include <IOKit/IOTimerEventSource.h>
 #include <IOKit/usb/StandardUSB.h>
 #include <IOKit/usb/IOUSBHostFamily.h>
+#pragma GCC diagnostic pop
 #include "_60Controller.h"
 #include "ChatPad.h"
 #include "Controller.h"

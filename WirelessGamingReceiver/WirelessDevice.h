@@ -23,7 +23,10 @@
 #ifndef __WIRELESSDEVICE_H__
 #define __WIRELESSDEVICE_H__
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wquoted-include-in-framework-header"
 #include <IOKit/IOService.h>
+#pragma GCC diagnostic pop
 
 class WirelessDevice;
 
@@ -34,7 +37,7 @@ class WirelessDevice : public IOService
     OSDeclareDefaultStructors(WirelessDevice);
 
 public:
-    bool init(OSDictionary *dictionary = 0);
+    bool init(OSDictionary *dictionary = 0) override;
 
     // Controller interface
     bool IsDataAvailable(void);
